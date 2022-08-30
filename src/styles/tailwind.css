@@ -1,7 +1,10 @@
-@tailwind base; 
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@400;500;600;700&display=swap');
+
+@tailwind base;
 @tailwind components; 
 @tailwind utilities; 
 
 * {
   outline: none;
+  font-family: 'Signika', sans-serif;
 }

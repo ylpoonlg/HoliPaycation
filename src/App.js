@@ -11,6 +11,7 @@ function App() {
           <Route path=':tripId'>
             <Route path='' element={<PayForm />} />
             <Route path='records' element={<h1>Records</h1>} />
+            <Route path='payments' element={<h1>Payments</h1>} />
             <Route path='submitted' element={<PayFormSubmitted />} />
           </Route>
           <Route path='*' element={<h1>404 Page Not Found</h1>} />

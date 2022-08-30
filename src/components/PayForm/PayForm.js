@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
+import Header from './Header';
 import '../../styles/style.css';
 
 const cssStyles = {
@@ -24,41 +25,27 @@ function PayForm() {
   }
   loadTripData();
 
-  function onFormSubmit(e) {
-    console.log(e);
-    fetch('/api/'+tripId+'/form-submit').then((response) => {
-      console.log(response);
-    });
-    setTimeout(() => {}, 100000);
-    return false;
-  }
-
   return (
     <div className='min-h-screen min-w-full bg-gray-100'>
-      <h1 className='text-gray-800 text-center text-3xl font-semibold pt-4'>
-        <span className='font-extrabold text-blue-800'>GoPaycation</span> Form
-      </h1>
+      <Header tripId={tripId} />
       <div className='p-8 m-6 bg-white rounded-2xl shadow shadow-slate-300'>
         <h1 className='text-gray-600 text-center text-2xl font-semibold'>
           {tripTitle}</h1>
 
-        <a className='absolute top-4 right-4 text-blue-900 hover:text-blue-700
-                      underline underline-offset-1'
-          href={'/'+tripId+'/records'} title='View All Records'>Records</a>
-
         {/* Input Sections */}
-        <form onSubmit={onFormSubmit} action={'/'+tripId+'/submitted'}>
+        <form action={'/'+tripId+'/submitted'}>
           <div className='mt-4'>
             <p className={cssStyles.inputTitle}>Item</p>
-            <input name='item-title' type='text' placeholder='e.g. Lunch, Supermarket, Train, etc.'
-              className={cssStyles.inputField} />
+            <input name='item_title' type='text' placeholder='e.g. Lunch, Supermarket, Train, etc.'
+              className={cssStyles.inputField} required="required" />
           </div>
           <div className='mt-4'>
             <p className={cssStyles.inputTitle}>Amount</p>
             <div className='flex'>
-              <input name='amount' type='number' className={cssStyles.inputField} defaultValue={0} />
+              <input name='amount' type='number' className={cssStyles.inputField}
+                defaultValue={0} min={0} required="required" />
               <div className='pl-6 flex align-middle'>
-                <input type='checkbox' name='amount-total'
+                <input type='checkbox' name='amount_total'
                   checked={amtTotal} value='true'
                   className='hidden' onChange={() => {}} />
                 <PayFormCheckbox checked={amtTotal}
@@ -75,7 +62,7 @@ function PayForm() {
           </div>
           <div className='mt-4'>
             <p className={cssStyles.inputTitle}>Who Paid</p>
-            <input name='paid' type='text' className='hidden' value={paid} onChange={() => {}} />
+            <input name='paid' type='text' className='hidden' value={paid} onChange={() => {}} required="required" />
             <PayFormDropdown value={paid} placeholder='-- Select Paid Person --' options={members} onChange={(val) => {
               setPaid(val);
             }} />
@@ -113,6 +100,12 @@ function PayForm() {
                                             bg-blue-600 text-white
                                             hover:bg-blue-700
                                             rounded-lg cursor-pointer'
+              onClick={() => {
+                if (paid === '') {
+                  alert('Please select a person who paid.');
+                  return false;
+                }
+              }}
               value={'Add'} />
           </div>
         </form>
