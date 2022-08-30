@@ -1,24 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, useHistory } from 'react-router-dom';
+import PayForm from './components/PayForm/PayForm';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/'>
+          <Route path='' element={<h1>Home Page</h1>} />
+          <Route path=':tripId'>
+            <Route path='' element={<PayForm />} />
+            <Route path='records' element={<h1>Records</h1>} />
+          </Route>
+          <Route path='*' element={<h1>404 Page Not Found</h1>} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
