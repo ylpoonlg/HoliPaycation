@@ -42,7 +42,7 @@ function PayForm() {
           <div className='mt-4'>
             <p className={cssStyles.inputTitle}>Amount</p>
             <div className='flex'>
-              <input name='amount' type='number' className={cssStyles.inputField}
+              <input name='amount' type='number' step={0.01} className={cssStyles.inputField}
                 defaultValue={0} min={0} required="required" />
               <div className='pl-6 flex align-middle'>
                 <input type='checkbox' name='amount_total'

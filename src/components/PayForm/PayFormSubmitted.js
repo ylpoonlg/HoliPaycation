@@ -1,19 +1,39 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "./Header";
 
 function PayFormSubmitted() {
   let { tripId } = useParams();
+  let [submitted, setSubmitted] = useState(false);
+  let [resultText, setResultText] = useState('Please wait...');
 
   let tripTitle = 'Title for ' + tripId;
   
   function submitForm() {
     let urlParams = window.location.href.split('?')[1];
-    console.log(urlParams);
     fetch('/api/'+tripId+'/form-submit?'+urlParams, {
       method: 'POST',
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((json) => {
+          if (json.result === 'success') {
+            setSubmitted(true);
+            setResultText('Your form has been submitted!');
+          } else {
+            setSubmitted(true);
+            setResultText(json.msg ?? 'Failed to submit form.');
+          }
+        });
+      } else {
+        setSubmitted(true);
+        setResultText('Sorry, something went wrong :(');
+      }
     });
   }
-  submitForm();
+
+  window.onload = () => {
+    submitForm();
+  }
 
   return (
     <div className='min-h-screen min-w-full bg-gray-100'>
@@ -22,12 +42,12 @@ function PayFormSubmitted() {
         <h1 className='text-gray-600 text-center text-2xl font-semibold'>
           {tripTitle}</h1>
         <h1 className='mt-4 text-gray-800 text-center text-xl'>
-          Your entry has been inserted!
+          {resultText}
         </h1>
-        <a className='block mx-auto mt-16 mb-2 px-4 py-2 text-white bg-blue-600
-                      rounded-lg cursor-pointer hover:bg-blue-700
-                      text-center text-lg font-normal
-                     '
+        <a className={'block mx-auto mt-16 mb-2 px-4 py-2 text-white bg-blue-600\
+                      rounded-lg cursor-pointer hover:bg-blue-700\
+                      text-center text-lg font-normal'+
+                      (submitted ? ' ' : ' hidden')}
           href={'/'+tripId}
         >Submit another form</a>
       </div>

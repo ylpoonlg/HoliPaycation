@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useHistory } from 'react-router-dom';
+import HomePage from './components/HomePage/HomePage';
 import PayForm from './components/PayForm/PayForm';
 import PayFormSubmitted from './components/PayForm/PayFormSubmitted';
 
@@ -7,7 +8,7 @@ function App() {
     <Router>
       <Routes>
         <Route path='/'>
-          <Route path='' element={<h1>Home Page</h1>} />
+          <Route path='' element={<HomePage />} />
           <Route path=':tripId'>
             <Route path='' element={<PayForm />} />
             <Route path='records' element={<h1>Records</h1>} />
