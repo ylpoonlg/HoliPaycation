@@ -45,7 +45,7 @@ function PayForm() {
               <input name='amount' type='number' step={0.01} className={cssStyles.inputField}
                 defaultValue={0} min={0} required="required" />
               <div className='pl-6 flex align-middle'>
-                <input type='checkbox' name='amount_total'
+                <input type='checkbox' name='total'
                   checked={amtTotal} value='true'
                   className='hidden' onChange={() => {}} />
                 <PayFormCheckbox checked={amtTotal}
