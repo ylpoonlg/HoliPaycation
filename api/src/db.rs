@@ -13,7 +13,7 @@ pub async fn init_db() -> Result<(), Box<dyn Error>> {
    //    println!("- {}", name);
    // }
    unsafe {
-       DB = Some(client.database("gopaycation"));
+       DB = Some(client.database("gopaycation_db"));
    }
 
    Ok(())
