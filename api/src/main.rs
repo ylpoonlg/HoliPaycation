@@ -3,6 +3,7 @@ mod db;
 use bson::DateTime;
 use bson::document::Document;
 use mongodb::bson::doc;
+use std::collections::HashMap;
 
 #[macro_use] extern crate rocket;
 
@@ -11,7 +12,7 @@ fn root() -> &'static str {
     "GoPaycation API"
 }
 
-
+// Trips
 #[post("/create-trip?<trip_title>&<currency>&<members>")]
 async fn create_trip(trip_title: &str, currency: &str, members: &str) -> String {
     let db_ref = db::get_db().await;
@@ -102,9 +103,10 @@ async fn get_trip_details(trip_id: &str) -> String {
     );
 
     json.to_string()
-    
 }
 
+
+// Records
 #[post("/<trip_id>/form-submit?<item_title>&<amount>&<total>&<paid>&<payers>")]
 async fn form_submit(trip_id: &str, item_title: &str, amount: f32, total: bool,
             paid: &str, payers: &str,
@@ -145,7 +147,6 @@ async fn form_submit(trip_id: &str, item_title: &str, amount: f32, total: bool,
     "{\"result\": \"success\"}"
 }
 
-
 #[get("/<trip_id>/records")]
 async fn get_records(trip_id: &str) -> String {
     let db_ref = db::get_db().await;
@@ -182,10 +183,93 @@ async fn get_records(trip_id: &str) -> String {
     ).to_string()
 }
 
+
+// Payments
+#[get("/<trip_id>/payments")]
+async fn get_payments(trip_id: &str) -> String {
+    let db_ref = db::get_db().await;
+    let records = db_ref.collection::<Document>("records");
+    let result = records.find(
+        doc! {
+            "trip_id": trip_id,
+        },
+        None,
+    ).await;
+
+    if result.is_err() {
+        println!("  ==> Failed to get records");
+        return "{\"result\": \"db_failed\"}".to_string();
+    }
+
+    let mut spent: HashMap<String, f64> = HashMap::new();
+    let mut payments: Vec<String> = [].to_vec();
+    let mut cur = result.unwrap();
+    while cur.advance().await.unwrap() {
+        let record = cur.deserialize_current().unwrap();
+        let mut amount = record.get_f64("amount").unwrap();
+        let total = record.get_bool("total").unwrap();
+        let paid = record.get_str("paid").unwrap();
+        let payers = record.get_array("payers").unwrap();
+
+        if total {
+            amount /= payers.len() as f64;
+        }
+        
+        for i in payers {
+            let payer = i.as_str().unwrap();
+            spent.insert(
+                payer.to_string(),
+                spent.get(payer).unwrap_or(&0.0) + amount
+            );
+            spent.insert(
+                paid.to_string(),
+                spent.get(paid).unwrap_or(&0.0) - amount
+            );
+        }
+    }
+
+    let tmp = spent.clone();
+    for i in tmp.keys() {
+        for j in tmp.keys() {
+            let from_spent = spent.get(i).unwrap().to_owned();
+            let to_spent   = spent.get(j).unwrap().to_owned();
+            if from_spent <= 0.0 {
+                break;
+            }
+
+            if to_spent < 0.0 {
+                let amount = from_spent.min(-to_spent);
+                spent.insert(
+                    i.to_string(),
+                    spent.get(i).unwrap_or(&0.0) - amount
+                );
+                spent.insert(
+                    j.to_string(),
+                    spent.get(j).unwrap_or(&0.0) + amount
+                );
+
+                payments.push(format!("{}", doc! {
+                    "from":   i.to_string(),
+                    "to":     j.to_string(),
+                    "amount": amount,
+                }));
+            }
+        }
+    }
+
+    format!(
+        "{{\"result\": \"success\", \"payments\": [{}]}}",
+        payments.join(","),
+    ).to_string()
+}
+
+
 #[launch]
 async fn rocket() -> _ {
     rocket::build().mount("/api", routes![
-        root, create_trip, get_trip_details, form_submit, get_records,
+        root, create_trip, get_trip_details,
+        form_submit, get_records,
+        get_payments,
     ])
 }
 
