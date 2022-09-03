@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BsShare, BsClipboard, BsCheck, BsLink } from 'react-icons/bs';
+import Footer from '../Footer';
 
 function TripCreatedPage(props) {
   let tripId = props.tripId;
@@ -79,6 +80,7 @@ function TripCreatedPage(props) {
           Enjoy and have a safe trip!
         </p>
       </div>
+      <Footer />
     </div>
   );
 }

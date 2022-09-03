@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import Footer from "../Footer";
 import Header from "./Header";
 
 function PayFormSubmitted(props) {
@@ -80,6 +81,7 @@ function PayFormSubmitted(props) {
           href={'/'+tripId}
         >Submit another form</a>
       </div>
+      <Footer />
     </div>
   );
 }

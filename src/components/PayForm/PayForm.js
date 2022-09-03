@@ -4,6 +4,7 @@ import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 import styles from '../../styles/styles';
 import Header from './Header';
+import Footer from '../Footer';
 import '../../styles/style.css';
 
 const cssStyles = {
@@ -128,6 +129,8 @@ function PayForm() {
           </div>
         </form>
       </div>
+
+      <Footer />
     </div>
   );
 }
@@ -135,7 +138,6 @@ function PayForm() {
 export default PayForm;
 
 function PayFormCheckbox(props) {
-  let name = props.name;
   let checked = props.checked ?? false;
   let onChange = props.onChange ?? (() => {});
 

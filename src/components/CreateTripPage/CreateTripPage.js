@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BsPlusCircle, BsX } from 'react-icons/bs';
+import Footer from '../Footer';
 
 import TripCreatedPage from './TripCreatedPage';
 
@@ -164,7 +165,7 @@ function CreateTripForm(props) {
           >Let's GO!!!</button>
         </div>
       </div>
-
+      <Footer />
     </div>
   );
 }

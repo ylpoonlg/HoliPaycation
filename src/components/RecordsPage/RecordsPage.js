@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from '../../styles/styles';
+import Footer from '../Footer';
 
 import './records-styles.css';
-
-const cssStyles = {
-  navLink: 'block mx-4 text-lg font-normal text-gray-800 '+
-    'hover:text-blue-800 cursor-pointer hover:underline',
-};
 
 function RecordsPage() {
   let { tripId } = useParams();
@@ -37,7 +33,6 @@ function RecordsPage() {
       method: 'GET',
     }).then((response) => {
       response.json().then((response) => {
-        console.log(response);
         if (response.result !== 'success') {
           return;
         }
@@ -90,16 +85,17 @@ function RecordsPage() {
   >GoPaycation</h1>
 
   <div className='mt-4 flex justify-center'>
-    <a className={cssStyles.navLink}
+    <a className={styles.form_nav_link}
       href={'/'+tripId}>Back to Form</a>
-    <a className={cssStyles.navLink}
-      href={'/'+tripId+'/payments'}>Pay Now</a>
+    <a className={styles.form_nav_link}
+      href={'/'+tripId+'/payments'}>Who Pays Who?</a>
   </div>
 
   <div className={styles.paper} style={{maxWidth: '48rem'}}>
+    <h1 className='text-gray-600 text-center text-2xl font-semibold'>
+      {tripDetails.trip_title}</h1>
     <h1 className='text-2xl text-gray-800 font-bold text-center'>
-      Records
-    </h1>
+      Records</h1>
 
     <div className='mt-4 rounded-lg shadow shadow-gray-200 overflow-auto'>
       <table className='records table-auto w-full bg-gray-100 border-collapse'>
@@ -137,6 +133,7 @@ function RecordsPage() {
       </table>
     </div>
   </div>
+  <Footer />
 </div>
   );
 }

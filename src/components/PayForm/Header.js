@@ -18,7 +18,7 @@ function Header(props) {
         <a className={cssStyles.navLink}
           href={'/'+tripId+'/records'}>Records</a>
         <a className={cssStyles.navLink}
-          href={'/'+tripId+'/payments'}>Pay Now</a>
+          href={'/'+tripId+'/payments'}>Who Pays Who?</a>
       </div>
     </div>
   );
