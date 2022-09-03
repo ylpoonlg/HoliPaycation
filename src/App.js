@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage/HomePage';
+import CreateTripPage from './components/CreateTripPage/CreateTripPage';
 import PayForm from './components/PayForm/PayForm';
 import PayFormSubmitted from './components/PayForm/PayFormSubmitted';
-import CreateTripPage from './components/CreateTripPage/CreateTripPage';
+import RecordsPage from './components/RecordsPage/RecordsPage';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <Route path='create-trip' element={<CreateTripPage />} />
           <Route path=':tripId'>
             <Route path='' element={<PayForm />} />
-            <Route path='records' element={<h1>Records</h1>} />
+            <Route path='records' element={<RecordsPage />} />
             <Route path='payments' element={<h1>Payments</h1>} />
             <Route path='submitted' element={<PayFormSubmitted />} />
           </Route>

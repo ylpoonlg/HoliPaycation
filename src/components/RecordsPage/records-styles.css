@@ -1,0 +1,9 @@
+table.records th {
+  padding-left: 0.5rem;
+  background-color: rgb(37, 99, 235);
+  color: white;
+}
+
+table.records td {
+  overflow: auto;
+}

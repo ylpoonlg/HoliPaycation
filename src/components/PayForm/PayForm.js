@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
+import styles from '../../styles/styles';
 import Header from './Header';
 import '../../styles/style.css';
 
@@ -43,9 +44,9 @@ function PayForm() {
   }
 
   return (
-    <div className='min-h-screen min-w-full px-4 bg-gray-100'>
+    <div className={styles.page}>
       <Header tripId={tripId} />
-      <div className='max-w-lg m-auto mt-6 p-8 bg-white rounded-2xl shadow shadow-slate-300'>
+      <div className={styles.paper}>
         <h1 className='text-gray-600 text-center text-2xl font-semibold'>
           {tripDetails.trip_title}</h1>
 
