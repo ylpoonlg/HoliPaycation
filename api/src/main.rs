@@ -96,6 +96,7 @@ async fn get_trip_details(trip_id: &str) -> String {
         doc! {
             "trip_id":    details.get_str("trip_id").unwrap(),
             "title": details.get_str("title").unwrap(),
+            "currency": details.get("currency").unwrap(),
             "members": details.get_array("members").unwrap(),
         },
     );
@@ -144,10 +145,47 @@ async fn form_submit(trip_id: &str, item_title: &str, amount: f32, total: bool,
     "{\"result\": \"success\"}"
 }
 
+
+#[get("/<trip_id>/records")]
+async fn get_records(trip_id: &str) -> String {
+    let db_ref = db::get_db().await;
+    let records = db_ref.collection::<Document>("records");
+    let result = records.find(
+        doc! {
+            "trip_id": trip_id,
+        },
+        None,
+    ).await;
+
+    if result.is_err() {
+        println!("  ==> Failed to get records");
+        return "{\"result\": \"db_failed\"}".to_string();
+    }
+
+    let mut records: Vec<String> = [].to_vec();
+    let mut cur = result.unwrap();
+    while cur.advance().await.unwrap() {
+        let record = cur.deserialize_current().unwrap();
+        println!(" => Retreived record: {:?}", record);
+        records.push(format!("{}", doc! {
+            "timestamp": record.get_datetime("time").unwrap().timestamp_millis(),
+            "item":      record.get("item").unwrap(),
+            "amount":    record.get("amount").unwrap(),
+            "total":     record.get("total").unwrap(),
+            "paid":      record.get("paid").unwrap(),
+            "payers":    record.get("payers").unwrap(),
+        }).to_string());
+    }
+    format!(
+        "{{\"result\": \"success\", \"records\": [{}]}}",
+        records.join(",")
+    ).to_string()
+}
+
 #[launch]
 async fn rocket() -> _ {
     rocket::build().mount("/api", routes![
-        root, create_trip, get_trip_details, form_submit,
+        root, create_trip, get_trip_details, form_submit, get_records,
     ])
 }
 
