@@ -2,12 +2,31 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "./Header";
 
-function PayFormSubmitted() {
+function PayFormSubmitted(props) {
   let { tripId } = useParams();
   let [submitted, setSubmitted] = useState(false);
   let [resultText, setResultText] = useState('Please wait...');
 
-  let tripTitle = 'Title for ' + tripId;
+  let [tripDetails, setTripDetails] = useState({
+    loaded: false,
+    trip_title: 'Loading...',
+    members: [],
+  });
+
+  async function loadTripData() {
+    if (tripDetails.loaded) return;
+
+    let response = await fetch('/api/'+tripId+'/details', {
+      method: 'GET',
+    });
+
+    let details = (await response.json())["details"];
+    let tmp = Object.assign({}, tripDetails);
+    tmp.loaded = true;
+    tmp.trip_title = details.title;
+    tmp.members = details.members;
+    setTripDetails(tmp);
+  }
   
   function submitForm() {
     let urlParams = window.location.href.split('?')[1];
@@ -42,14 +61,15 @@ function PayFormSubmitted() {
 
   window.onload = () => {
     submitForm();
+    loadTripData();
   }
 
   return (
-    <div className='min-h-screen min-w-full bg-gray-100'>
+    <div className='min-h-screen min-w-full px-4 bg-gray-100'>
       <Header tripId={tripId} />
-      <div className='p-8 m-6 bg-white rounded-2xl shadow shadow-slate-300'>
+      <div className='max-w-lg p-8 mx-auto mt-6 bg-white rounded-2xl shadow shadow-slate-300'>
         <h1 className='text-gray-600 text-center text-2xl font-semibold'>
-          {tripTitle}</h1>
+          {tripDetails.trip_title}</h1>
         <h1 className='mt-4 text-gray-800 text-center text-xl'>
           {resultText}
         </h1>

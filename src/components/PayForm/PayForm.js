@@ -17,20 +17,37 @@ function PayForm() {
   let [paid, setPaid]         = useState('');
   let [payers, setPayers]     = useState([]);
 
-  let tripTitle = 'Title for ' + tripId;
-  let members = ['Person 1', 'Person 2', 'Person 3'];
+  let [tripDetails, setTripDetails] = useState({
+    loaded: false,
+    trip_title: 'Loading...',
+    members: [],
+  });
 
   async function loadTripData() {
+    if (tripDetails.loaded) return;
 
+    let response = await fetch('/api/'+tripId+'/details', {
+      method: 'GET',
+    });
+
+    let details = (await response.json())["details"];
+    let tmp = Object.assign({}, tripDetails);
+    tmp.loaded = true;
+    tmp.trip_title = details.title;
+    tmp.members = details.members;
+    setTripDetails(tmp);
   }
-  loadTripData();
+
+  window.onload = () => {
+    loadTripData();
+  }
 
   return (
-    <div className='min-h-screen min-w-full bg-gray-100'>
+    <div className='min-h-screen min-w-full px-4 bg-gray-100'>
       <Header tripId={tripId} />
-      <div className='p-8 m-6 bg-white rounded-2xl shadow shadow-slate-300'>
+      <div className='max-w-lg m-auto mt-6 p-8 bg-white rounded-2xl shadow shadow-slate-300'>
         <h1 className='text-gray-600 text-center text-2xl font-semibold'>
-          {tripTitle}</h1>
+          {tripDetails.trip_title}</h1>
 
         {/* Input Sections */}
         <form action={'/'+tripId+'/submitted'}>
@@ -63,7 +80,7 @@ function PayForm() {
           <div className='mt-4'>
             <p className={cssStyles.inputTitle}>Who Paid</p>
             <input name='paid' type='text' className='hidden' value={paid} onChange={() => {}} required="required" />
-            <PayFormDropdown value={paid} placeholder='-- Select Paid Person --' options={members} onChange={(val) => {
+            <PayFormDropdown value={paid} placeholder='-- Select Paid Person --' options={tripDetails.members} onChange={(val) => {
               setPaid(val);
             }} />
           </div>
@@ -72,7 +89,7 @@ function PayForm() {
             <p className={cssStyles.inputTitle}>Payers</p>
             <input name='payers' type='text' className='hidden' value={payers} onChange={() => {}} />
             <div className='mt-2'>
-              {members.map(e => (
+              {tripDetails.members.map(e => (
                 <div key={e + '-item'}>
                   <div className={'flex justify-start py-2 my-1 rounded-lg '+
                       'hover:bg-gray-200 cursor-pointer '+

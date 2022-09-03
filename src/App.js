@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useHistory } from 'react-router
 import HomePage from './components/HomePage/HomePage';
 import PayForm from './components/PayForm/PayForm';
 import PayFormSubmitted from './components/PayForm/PayFormSubmitted';
+import CreateTripPage from './components/CreateTripPage/CreateTripPage';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         <Route path='/'>
           <Route path='' element={<HomePage />} />
+          <Route path='create-trip' element={<CreateTripPage />} />
           <Route path=':tripId'>
             <Route path='' element={<PayForm />} />
             <Route path='records' element={<h1>Records</h1>} />
