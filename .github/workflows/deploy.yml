@@ -17,7 +17,7 @@ jobs:
           port: 22
           script: |
             cd ~/Git-Repos/HoliPaycation
-            git pull origin master
+            git pull origin main
             npm run build
             chmod +x api/debug.sh
             systemctl --user restart holipaycation.service
