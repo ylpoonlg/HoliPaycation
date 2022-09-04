@@ -20,7 +20,7 @@ function HomePage() {
         Welcome to 
         <span className='font-extrabold text-blue-800'
           style={{fontFamily: "'Signika', sans-serif"}}
-        > GoPaycation</span>!
+        > HoliPaycation</span>!
       </h1>
 
       <div className='absolute w-full top-1/2 m-auto -translate-y-1/2 px-6 pb-36'>

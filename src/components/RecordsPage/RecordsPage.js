@@ -82,7 +82,7 @@ function RecordsPage() {
                  font-extrabold pt-4 cursor-pointer'
     style={{fontFamily: "'Signika', sans-serif"}}
     onClick={() => {window.location.assign('/')}}
-  >GoPaycation</h1>
+  >HoliPaycation</h1>
 
   <div className='mt-4 flex justify-center'>
     <a className={styles.form_nav_link}

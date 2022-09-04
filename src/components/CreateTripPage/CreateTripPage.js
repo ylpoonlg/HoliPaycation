@@ -92,7 +92,7 @@ function CreateTripForm(props) {
         style={{fontFamily: "'Signika', sans-serif"}}
         onClick={() => {window.location.assign('/')}}
       >
-        GoPaycation
+        HoliPaycation
       </h1>
       <h1 className='text-gray-800 text-center text-3xl font-semibold pt-8'>
         Create a New Trip!

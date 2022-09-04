@@ -1,4 +1,4 @@
-# GoPaycation
+# HoliPaycation
 
 ## *** Work In Progress ***
 

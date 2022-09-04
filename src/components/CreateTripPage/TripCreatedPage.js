@@ -32,7 +32,7 @@ function TripCreatedPage(props) {
         style={{fontFamily: "'Signika', sans-serif"}}
         onClick={() => {window.location.assign('/')}}
       >
-        GoPaycation
+        HoliPaycation
       </h1>
       
       <div className='px-8'>

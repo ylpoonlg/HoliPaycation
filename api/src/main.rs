@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 #[get("/")]
 fn root() -> &'static str {
-    "GoPaycation API"
+    "HoliPaycation API"
 }
 
 // Trips

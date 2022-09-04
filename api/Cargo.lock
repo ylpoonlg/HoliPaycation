@@ -572,19 +572,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
 
 [[package]]
-name = "gopaycation_api"
-version = "0.1.0"
-dependencies = [
- "bson",
- "chrono",
- "mongodb",
- "random-string",
- "rocket",
- "serde",
- "tokio",
-]
-
-[[package]]
 name = "h2"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -646,6 +633,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c49c37c09c17a53d937dfbb742eb3a961d65a994e6bcdcf37e7399d0cc8ab5e"
 dependencies = [
  "digest",
+]
+
+[[package]]
+name = "holipaycation_api"
+version = "0.1.0"
+dependencies = [
+ "bson",
+ "chrono",
+ "mongodb",
+ "random-string",
+ "rocket",
+ "serde",
+ "tokio",
 ]
 
 [[package]]

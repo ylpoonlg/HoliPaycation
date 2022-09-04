@@ -1,5 +1,5 @@
 [package]
-name = "gopaycation_api"
+name = "holipaycation_api"
 version = "0.1.0"
 edition = "2021"
 

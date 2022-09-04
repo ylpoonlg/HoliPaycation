@@ -12,7 +12,7 @@ function Header(props) {
         <span className='font-extrabold text-blue-800 cursor-pointer'
           onClick={(_) => {window.location.assign('/');}}
           style={{fontFamily: "'Signika', sans-serif"}}
-        >GoPaycation</span> Form
+        >HoliPaycation</span> Form
       </h1>
       <div className='mt-4 flex justify-center'>
         <a className={cssStyles.navLink}
