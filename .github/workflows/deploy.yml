@@ -1,0 +1,23 @@
+name: Deploy to debian-web-2
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: holipaycation.com
+          username: ${{ secrets.DEBWEB2_USER }}
+          password: ${{ secrets.DEBWEB2_PASSWD }}
+          port: 22
+          script: |
+            cd ~/Git-Repos/HoliPaycation
+            git pull origin master
+            npm run build
+            chmod +x api/debug.sh
+            systemctl --user restart holipaycation.service
