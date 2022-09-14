@@ -68,7 +68,7 @@ function PaymentsPage() {
       Payments</h1>
 
     <div className='mt-8 px-6'>{
-      payments.map((val, i) => {
+      payments.length > 0 ? payments.map((val, i) => {
         let nameStyle = 'mx-4 font-semibold text-2xl text-gray-800';
         return (
           <div key={'payment-item-'+i.toString()}
@@ -83,7 +83,9 @@ function PaymentsPage() {
             </div>
           </div>
         );
-      })
+      }) : (
+        <h1 className='text-lg text-gray-800 text-center'>{emptyMsg}</h1>
+      )
     }</div>
   </div>
   <Footer />

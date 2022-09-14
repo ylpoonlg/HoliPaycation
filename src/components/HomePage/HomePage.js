@@ -1,16 +1,29 @@
 import Footer from "../Footer";
 
+const styles = {
+  introHeader: 'mt-6 text-blue-600 text-2xl font-semibold',
+  introBody:   'mt-4 text-gray-700 text-xl',
+};
+
 function HomePage() {
   let tripID = '';
 
-  function onJoinTrip() {
+  async function onJoinTrip() {
     //console.log('Joining trip: ' + tripID);
     if (tripID === '') {
       alert('Please enter a valid trip id.');
       return;
     }
-    // TODO: Check if trip exist
-    window.location.assign('/' + tripID);
+
+    let response = await fetch('/api/'+tripID+'/details', {method: 'GET'});
+    response = await response.json();
+    console.log(response);
+    if (response.result === 'not_found') {
+      alert('Trip Id does not exist. Please make sure you have entered the id correctly.');
+      return;
+    } else if (response.result === 'success') {
+      window.location.assign('/' + tripID);
+    }
   }
 
   return (
@@ -23,7 +36,7 @@ function HomePage() {
         > HoliPaycation</span>!
       </h1>
 
-      <div className='absolute w-full top-1/2 m-auto -translate-y-1/2 px-6 pb-36'>
+      <div className='w-full m-auto mt-24 px-6 pb-36'>
         <button className='block mx-auto text-center text-2xl px-6 py-4
                            sm:text-4xl sm:px-12
                            text-white bg-blue-600 hover:bg-blue-700 rounded-full
@@ -52,9 +65,21 @@ function HomePage() {
             Go to Form</button>
         </div>
       </div>
-      <div className='pt-96'><div className='pt-36'>
-        <Footer />
-      </div></div>
+      <div className='py-8 pb-16 text-center bg-gray-200'>
+        <h1 className='text-blue-800 text-4xl font-semibold'>Introduction</h1>
+        <p className={styles.introBody}>
+          HoliPaycation is a website for calculating shared expenses during holidays
+        </p>
+
+        <h1 className={styles.introHeader}>How to use it?</h1>
+        <ol className={styles.introBody + ' text-left max-w-xl m-auto px-8 list-decimal'} type='I'>
+          <li>Create a trip by clicking the button above.</li>
+          <li>Copy the trip id or form url and write it down in a secure place.</li>
+          <li>Share the link to other members of the trip.</li>
+          <li>Go to the entry form using the link copied earlier or enter the trip id to join the trip.</li>
+        </ol>
+      </div>
+      <Footer />
     </div>
   );
 }

@@ -19,5 +19,5 @@ jobs:
             cd ~/Git-Repos/HoliPaycation
             git pull origin main
             npm run build
-            chmod +x api/debug.sh
+            chmod +x api/run.sh
             systemctl --user restart holipaycation.service

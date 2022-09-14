@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BsShare, BsClipboard, BsCheck, BsLink } from 'react-icons/bs';
+import { BsInfoCircle, BsClipboard, BsCheck, BsLink } from 'react-icons/bs';
 import Footer from '../Footer';
 
 function TripCreatedPage(props) {
@@ -53,7 +53,7 @@ function TripCreatedPage(props) {
             onClick={onCopyTripId}>{tidCopyBtn}</button>
         </div>
 
-        <div className={'mt-6 flex justify-center items-center'}>
+        <div className={'my-8 flex justify-center items-center'}>
           <button className='w-8 h-8 rounded-full text-xl mr-3
                              text-gray-600 hover:text-gray-800
                             ' title='Copy link to clipboard'
@@ -66,15 +66,21 @@ function TripCreatedPage(props) {
             <p className='text-gray-600 text-md'>Share this link with other members</p>
           </div>
         </div>
-
-        <div className='flex justify-center items-center mt-10'>
-          <button className='max-w-sm w-full mx-6 px-8 py-2 rounded-2xl
-                             text-white bg-blue-600 shadow shadow-gray-500
-                             hover:bg-blue-700 hover:shadow-black
-                            ' title='Fill out a form'
-            onClick={(_) => {window.location.replace('/' + tripId);}}
-          >Go to form</button>
+        
+        <div className='flex justify-center items-start my-4 mx-auto'>
+          <BsInfoCircle className='text-md text-gray-700 mt-1 mr-2' /> 
+          <p className='text-gray-800 text-sm w-96 text-justify'>
+            Make sure you have marked down the trip id and the form link.
+            You will not be able to find this again later.
+          </p>
         </div>
+
+        <button className='block w-96 mx-auto px-8 py-2 rounded-2xl
+                           text-white bg-blue-600 shadow shadow-gray-500
+                           hover:bg-blue-700 hover:shadow-black
+                          ' title='Fill out a form'
+          onClick={(_) => {window.location.replace('/' + tripId);}}
+        >Go to form</button>
 
         <p className='mt-8 text-center text-2xl text-gray-800 font-semibold'>
           Enjoy and have a safe trip!
