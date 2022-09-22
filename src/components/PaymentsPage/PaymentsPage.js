@@ -16,33 +16,33 @@ function PaymentsPage() {
   });
   let [payments, setPayments] = useState([]);
 
-  async function loadTripData() {
-    if (tripDetails.loaded) return;
-    let response = await fetch('/api/'+tripId+'/details', {method: 'GET'});
-    let details = (await response.json())["details"];
-    let tmp = Object.assign({}, tripDetails);
-    tmp.loaded = true;
-    tmp.trip_title = details.title;
-    tmp.currency = details.currency;
-    tmp.members = details.members;
-    setTripDetails(tmp);
-  }
-
-  function loadPayments() {
-    fetch('/api/'+tripId+'/payments', {
-      method: 'GET',
-    }).then((response) => {
-      response.json().then((response) => {
-        if (response.result !== 'success') {
-          return;
-        }
-        setEmptyMsg('No payments required');
-        setPayments(response.payments);
-      });
-    });
-  }
-
   useEffect(() => {
+    async function loadTripData() {
+      if (tripDetails.loaded) return;
+      let response = await fetch('/api/'+tripId+'/details', {method: 'GET'});
+      let details = (await response.json())["details"];
+      let tmp = Object.assign({}, tripDetails);
+      tmp.loaded = true;
+      tmp.trip_title = details.title;
+      tmp.currency = details.currency;
+      tmp.members = details.members;
+      setTripDetails(tmp);
+    }
+
+    function loadPayments() {
+      fetch('/api/'+tripId+'/payments', {
+        method: 'GET',
+      }).then((response) => {
+        response.json().then((response) => {
+          if (response.result !== 'success') {
+            return;
+          }
+          setEmptyMsg('No payments required');
+          setPayments(response.payments);
+        });
+      });
+    }
+
     loadTripData();
     loadPayments();
   }, []);

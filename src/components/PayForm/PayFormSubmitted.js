@@ -29,38 +29,38 @@ function PayFormSubmitted(props) {
     setTripDetails(tmp);
   }
   
-  function submitForm() {
-    let urlParams = window.location.href.split('?')[1];
-    let params = new URLSearchParams(urlParams);
+  useEffect(() => {
+    function submitForm() {
+      let urlParams = window.location.href.split('?')[1];
+      let params = new URLSearchParams(urlParams);
 
-    if (params.has('submitted')) {
-      setSubmitted(true);
-      setResultText('Your form has been submitted!');
-      return;
+      if (params.has('submitted')) {
+        setSubmitted(true);
+        setResultText('Your form has been submitted!');
+        return;
+      }
+
+      fetch('/api/'+tripId+'/form-submit?'+urlParams, {
+        method: 'POST',
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json.result === 'success') {
+              let newUrl = new URL(window.location.href);
+              newUrl.searchParams.append('submitted', true);
+              window.location.replace(newUrl);
+            } else {
+              setSubmitted(true);
+              setResultText(json.msg ?? 'Failed to submit form.');
+            }
+          });
+        } else {
+          setSubmitted(true);
+          setResultText('Sorry, something went wrong :(');
+        }
+      });
     }
 
-    fetch('/api/'+tripId+'/form-submit?'+urlParams, {
-      method: 'POST',
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((json) => {
-          if (json.result === 'success') {
-            let newUrl = new URL(window.location.href);
-            newUrl.searchParams.append('submitted', true);
-            window.location.replace(newUrl);
-          } else {
-            setSubmitted(true);
-            setResultText(json.msg ?? 'Failed to submit form.');
-          }
-        });
-      } else {
-        setSubmitted(true);
-        setResultText('Sorry, something went wrong :(');
-      }
-    });
-  }
-
-  useEffect(() => {
     submitForm();
     loadTripData();
   }, []);

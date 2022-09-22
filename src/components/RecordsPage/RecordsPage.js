@@ -16,48 +16,48 @@ function RecordsPage() {
   });
   let [records, setRecords] = useState([]);
 
-  async function loadTripData() {
-    if (tripDetails.loaded) return;
-    let response = await fetch('/api/'+tripId+'/details', {method: 'GET'});
-    let details = (await response.json())["details"];
-    let tmp = Object.assign({}, tripDetails);
-    tmp.loaded = true;
-    tmp.trip_title = details.title;
-    tmp.currency = details.currency;
-    tmp.members = details.members;
-    setTripDetails(tmp);
-  }
-
-  function loadRecords() {
-    fetch('/api/'+tripId+'/records', {
-      method: 'GET',
-    }).then((response) => {
-      response.json().then((response) => {
-        if (response.result !== 'success') {
-          return;
-        }
-
-        let tmp = [];
-        response.records.forEach((rec) => {
-          let amountPp = rec.amount;
-          if (rec.total) {
-            amountPp /= rec.payers.length;
-          }
-          tmp.push({
-            timestamp: new Date(rec.timestamp),
-            item: rec.item,
-            amount: amountPp,
-            paid: rec.paid,
-            payers: rec.payers,
-          });
-        });
-        setEmptyMsg('No records found');
-        setRecords(tmp);
-      });
-    });
-  }
-
   useEffect(() => {
+    async function loadTripData() {
+      if (tripDetails.loaded) return;
+      let response = await fetch('/api/'+tripId+'/details', {method: 'GET'});
+      let details = (await response.json())["details"];
+      let tmp = Object.assign({}, tripDetails);
+      tmp.loaded = true;
+      tmp.trip_title = details.title;
+      tmp.currency = details.currency;
+      tmp.members = details.members;
+      setTripDetails(tmp);
+    }
+
+    function loadRecords() {
+      fetch('/api/'+tripId+'/records', {
+        method: 'GET',
+      }).then((response) => {
+        response.json().then((response) => {
+          if (response.result !== 'success') {
+            return;
+          }
+
+          let tmp = [];
+          response.records.forEach((rec) => {
+            let amountPp = rec.amount;
+            if (rec.total) {
+              amountPp /= rec.payers.length;
+            }
+            tmp.push({
+              timestamp: new Date(rec.timestamp),
+              item: rec.item,
+              amount: amountPp,
+              paid: rec.paid,
+              payers: rec.payers,
+            });
+          });
+          setEmptyMsg('No records found');
+          setRecords(tmp);
+        });
+      });
+    }
+
     loadTripData();
     loadRecords();
   }, []);
