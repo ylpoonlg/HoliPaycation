@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
@@ -40,9 +40,9 @@ function PayForm() {
     setTripDetails(tmp);
   }
 
-  window.onload = () => {
+  useEffect(() => {
     loadTripData();
-  }
+  }, []);
 
   return (
     <div className={styles.page}>

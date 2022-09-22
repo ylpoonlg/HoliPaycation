@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 
 import styles from '../../styles/styles';
@@ -42,10 +42,11 @@ function PaymentsPage() {
     });
   }
 
-  window.onload = () => {
+  useEffect(() => {
     loadTripData();
     loadPayments();
-  }
+  }, []);
+
   return (
 <div className={styles.page}>
   <h1 className='text-blue-800 text-center text-3xl sm:text-5xl

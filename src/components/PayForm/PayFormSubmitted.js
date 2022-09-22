@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "../Footer";
 import Header from "./Header";
@@ -60,10 +60,10 @@ function PayFormSubmitted(props) {
     });
   }
 
-  window.onload = () => {
+  useEffect(() => {
     submitForm();
     loadTripData();
-  }
+  }, []);
 
   return (
     <div className='min-h-screen min-w-full px-4 bg-gray-100'>

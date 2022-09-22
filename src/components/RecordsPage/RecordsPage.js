@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from '../../styles/styles';
 import Footer from '../Footer';
@@ -57,10 +57,10 @@ function RecordsPage() {
     });
   }
 
-  window.onload = () => {
+  useEffect(() => {
     loadTripData();
     loadRecords();
-  }
+  }, []);
 
   function formatDateTime(dt) {
     function leadZeros(x, n) {
