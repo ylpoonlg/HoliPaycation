@@ -44,13 +44,18 @@ async fn create_trip(trip_title: &str, currency: &str, members: &str) -> String 
             id_exist = false;
         }
     }
+    if id_exist {
+        println!("  ==> Failed to generate a new trip id");
+        return "{\"result\": \"db_failed\"}".to_string();
+    }
 
     let result = trips.insert_one(
         doc! {
-            "trip_id":  trip_id.clone(),
-            "title":    trip_title,
-            "currency": currency,
-            "members":  members,
+            "trip_id":       trip_id.clone(),
+            "title":         trip_title,
+            "currency":      currency,
+            "members":       members,
+            "last_accessed": DateTime::now(),
         },
         None,
     ).await;
@@ -59,11 +64,45 @@ async fn create_trip(trip_title: &str, currency: &str, members: &str) -> String 
         return "{\"result\": \"db_failed\"}".to_string();
     }
 
+    clear_expired_trips().await;
+
     let json = format!("{{
         \"result\": \"success\",
         \"trip_id\": \"{}\"
     }}", trip_id);
     json.to_string()
+}
+
+async fn clear_expired_trips() {
+    let db_ref = db::get_db().await;
+    let trips = db_ref.collection::<Document>("trips");
+    let records = db_ref.collection::<Document>("records");
+
+    let expire_duration: i64 = 1000 * 60 * 60 * 24 * 30; // 30 days
+    // let expire_duration: i64 = 1000 * 30; // 30 seconds (debug)
+
+    let result = trips.find(doc! {
+        "last_accessed": {
+            "$lt": DateTime::from_millis(DateTime::now().timestamp_millis() - expire_duration),
+        },
+    }, None).await;
+
+    let mut cur = result.unwrap();
+    while cur.advance().await.unwrap() {
+        let record = cur.deserialize_current().unwrap();
+        let trip_id = record.get_str("trip_id").unwrap();
+
+        let delete_trip_result = trips.delete_one(doc! {
+            "trip_id": trip_id,
+        }, None).await;
+        let delete_records_result = records.delete_many(doc! {
+            "trip_id": trip_id,
+        }, None).await;
+
+        if delete_trip_result.is_ok() && delete_records_result.is_ok() {
+            println!(" => Successfully deleted expired trip {}...", trip_id);
+        }
+    }
 }
 
 #[get("/<trip_id>/details")]
@@ -90,7 +129,13 @@ async fn get_trip_details(trip_id: &str) -> String {
 
     let details = result.unwrap();
 
-    println!("  ==> Trip details: {}", details);
+    let _access_result = trips.update_one(doc! {
+        "trip_id": trip_id,
+    }, doc! {
+        "$set": {
+            "last_accessed": DateTime::now(),
+        }
+    }, None).await;
 
     let json = format!(
         "{{\"result\": \"success\", \"details\": {} }}",
