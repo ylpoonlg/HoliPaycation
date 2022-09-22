@@ -164,6 +164,14 @@ function CreateTripForm(props) {
             onClick={onCreateTrip}
           >Let's GO!!!</button>
         </div>
+
+        <div className='mt-8'>
+          <p className='text-sm text-gray-600 text-center'>
+            <span className='font-semibold'>Data Usage and Terms:</span><br/>
+            Trips that are not accessed for more than 30 days may be removed automatically.<br/>
+            By entering the form, you agree to share your data to our site, which may be accessed publicly.
+          </p>
+        </div>
       </div>
       <Footer />
     </div>
