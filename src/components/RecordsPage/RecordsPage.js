@@ -4,6 +4,11 @@ import styles from '../../styles/styles';
 import Footer from '../Footer';
 
 import './records-styles.css';
+import { FaTrash, FaEdit } from 'react-icons/fa';
+
+const cssStyles = {
+  actionBtn: 'px-1 text-gray-500 underline hover:text-blue-800 cursor-pointer',
+};
 
 function RecordsPage() {
   let { tripId } = useParams();
@@ -45,6 +50,7 @@ function RecordsPage() {
               amountPp /= rec.payers.length;
             }
             tmp.push({
+              record_id: rec.record_id,
               timestamp: new Date(rec.timestamp),
               item: rec.item,
               amount: amountPp,
@@ -76,6 +82,28 @@ function RecordsPage() {
       + ` ${hh}:${mm}`;
   }
 
+  function deleteRecord(tripId, recordId) {
+    fetch('/api/delete-record/'+tripId+'/'+recordId, {
+      method: 'POST',
+    }).then((response) => {
+      response.json().then((response) => {
+        if (response.result !== 'success') {
+          console.log("Failed to delete record " + recordId);
+          alert("Failed to delete this record...");
+          return;
+        }
+
+        window.location.reload();
+      });
+    });
+  }
+
+  function editRecord(tripId, recordId) {
+    let url = new URL(window.location.origin+'/'+tripId);
+    url.searchParams.set('record_id', recordId);
+    window.location.href = url.href;
+  }
+
   return (
 <div className={styles.page}>
   <h1 className='text-blue-800 text-center text-3xl sm:text-5xl
@@ -101,22 +129,24 @@ function RecordsPage() {
       <table className='records table-auto w-full bg-gray-100 border-collapse'>
         <thead className='bg-blue-600'>
           <tr className='text-left'>
-            <th>Timestamp</th>
-            <th>Item</th>
-            <th>Amount <span className='text-xs'>(pp)</span></th>
-            <th>Paid by</th>
-            <th>Payers</th>
+            <th className='px-2'>Timestamp</th>
+            <th className='px-2'>Item</th>
+            <th className='px-2'>Amount <span className='text-xs'>(pp)</span></th>
+            <th className='px-2'>Paid by</th>
+            <th className='px-2'>Payers</th>
+            <th className='px-2'>Actions</th>
           </tr>
         </thead>
         <tbody>
           {(records.length == 0) ? (
             <tr>
-              <td colSpan={5} className='text-center'>{emptyMsg}</td>
+              <td colSpan={6} className='text-center'>{emptyMsg}</td>
             </tr>
           ) : null}
           {records.map((val, i) => {
             let cellStyle = 'px-2';
             let rowStyle = (i%2 == 0) ? 'bg-gray-50' : 'bg-gray-100';
+            let recordId = val.record_id;
             return (
             <tr key={i.toString() + '-record-row'} className={rowStyle}>
               <td className={cellStyle}>
@@ -126,6 +156,16 @@ function RecordsPage() {
               <td className={cellStyle}>{tripDetails.currency} {val.amount.toFixed(2)}</td>
               <td className={cellStyle}>{val.paid}</td>
               <td className={cellStyle}>{val.payers.join(',')}</td>
+              <td className={cellStyle}>
+                <div style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
+                  <button hidden className={cssStyles.actionBtn} onClick={() => {
+                    editRecord(tripId, recordId);
+                  }}><FaEdit/></button>
+                  <button className={cssStyles.actionBtn} onClick={() => {
+                    deleteRecord(tripId, recordId);
+                  }}><FaTrash/></button>
+                </div>
+              </td>
             </tr>
             );
           })}

@@ -3,6 +3,7 @@ mod db;
 use bson::DateTime;
 use bson::document::Document;
 use mongodb::bson::doc;
+use mongodb::bson::oid::ObjectId;
 use std::collections::HashMap;
 
 #[macro_use] extern crate rocket;
@@ -212,8 +213,8 @@ async fn get_records(trip_id: &str) -> String {
     let mut cur = result.unwrap();
     while cur.advance().await.unwrap() {
         let record = cur.deserialize_current().unwrap();
-        println!(" => Retreived record: {:?}", record);
         records.push(format!("{}", doc! {
+            "record_id": record.get_object_id("_id").unwrap().to_string(),
             "timestamp": record.get_datetime("time").unwrap().timestamp_millis(),
             "item":      record.get("item").unwrap(),
             "amount":    record.get("amount").unwrap(),
@@ -222,9 +223,33 @@ async fn get_records(trip_id: &str) -> String {
             "payers":    record.get("payers").unwrap(),
         }).to_string());
     }
+    println!(" => Retreived records: {:?}", records.join(","));
     format!(
         "{{\"result\": \"success\", \"records\": [{}]}}",
         records.join(",")
+    ).to_string()
+}
+
+#[post("/delete-record/<trip_id>/<record_id>")]
+async fn delete_record(trip_id: &str, record_id: &str) -> String {
+    let db_ref = db::get_db().await;
+    let records = db_ref.collection::<Document>("records");
+
+    let delete_record_result = records.delete_one(doc! {
+        "_id":     ObjectId::parse_str(record_id).unwrap(),
+        "trip_id": trip_id,
+    }, None).await;
+
+    if !delete_record_result.is_ok() {
+        println!(" => Failed to delete record {}...", record_id);
+        return format!(
+            "{{\"result\": \"failed\"}}",
+        ).to_string();
+    }
+
+    println!(" => Successfully deleted record {}...", record_id);
+    format!(
+        "{{\"result\": \"success\"}}",
     ).to_string()
 }
 
@@ -313,7 +338,7 @@ async fn get_payments(trip_id: &str) -> String {
 async fn rocket() -> _ {
     rocket::build().mount("/api", routes![
         root, create_trip, get_trip_details,
-        form_submit, get_records,
+        form_submit, get_records, delete_record,
         get_payments,
     ])
 }
