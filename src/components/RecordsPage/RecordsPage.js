@@ -83,6 +83,8 @@ function RecordsPage() {
   }
 
   function deleteRecord(tripId, recordId) {
+    if (!window.confirm("Are you sure you want to delete this record?")) return;
+
     fetch('/api/delete-record/'+tripId+'/'+recordId, {
       method: 'POST',
     }).then((response) => {
