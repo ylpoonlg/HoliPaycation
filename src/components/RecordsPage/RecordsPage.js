@@ -74,7 +74,7 @@ function RecordsPage() {
       return s.substring(s.length-n);
     }
     let DD = leadZeros(dt.getDate(), 2);
-    let MM = leadZeros(dt.getMonth(), 2);
+    let MM = leadZeros(dt.getMonth()+1, 2);
     let YYYY = leadZeros(dt.getFullYear(), 4);
     let hh = leadZeros(dt.getHours(), 2);
     let mm = leadZeros(dt.getMinutes(), 2);
