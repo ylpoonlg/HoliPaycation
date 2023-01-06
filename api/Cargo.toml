@@ -13,3 +13,4 @@ tokio = "1"
 chrono = "0.4" # Used for setting DateTimes
 serde = "1" # Used in the Map Data into Structs section
 random-string = "1.0.0"
+itertools = "0.10.5" # For sorting iter

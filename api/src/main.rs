@@ -2,6 +2,7 @@ mod db;
 
 use bson::DateTime;
 use bson::document::Document;
+use itertools::Itertools;
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use std::collections::HashMap;
@@ -157,17 +158,38 @@ async fn get_trip_details(trip_id: &str) -> String {
 async fn form_submit(trip_id: &str, item_title: &str, amount: f32, total: bool,
             paid: &str, payers: &str,
         ) -> &'static str {
-    let payers: Vec<&str> = payers.split(",").collect();
-    println!("------------------------------------------");
-    println!(" Form Submitted: {}",   trip_id);
-    println!("  -> Item = {}",        item_title);
-    println!("  -> Amount = {:.2}",   amount);
-    println!("  -> Total = {}",       total);
-    println!("  -> Paid Person = {}", paid);
-    println!("  -> Payers = {}",      payers.join(" | "));
-    println!("------------------------------------------");
-    
     let db_ref = db::get_db().await;
+
+    // Get trip members
+    let trips = db_ref.collection("trips");
+    let trip = trips.find_one(doc! {
+        "trip_id": trip_id,
+    }, None).await;
+    if trip.is_err() {
+        println!("  ==> Failed to get trip");
+        return "{\"result\": \"no_trip\"}";
+    }
+    let trip = trip.unwrap().unwrap_or(doc! {});
+    let members = trip.get_array("members").unwrap();
+
+    let payers: Vec<&str> = payers.split(",").collect();
+    let mut payers_sorted: Vec<&str> = Vec::new();
+    for member in members {
+        let member = member.as_str().unwrap();
+        if payers.contains(&member) {
+            payers_sorted.push(&member);
+        }
+    }
+
+    // println!("------------------------------------------");
+    // println!(" Form Submitted: {}",   trip_id);
+    // println!("  -> Item = {}",        item_title);
+    // println!("  -> Amount = {:.2}",   amount);
+    // println!("  -> Total = {}",       total);
+    // println!("  -> Paid Person = {}", paid);
+    // println!("  -> Payers = {}",      payers_sorted.join(" | "));
+    // println!("------------------------------------------");
+    
     let records = db_ref.collection("records");
     let record = doc! {
         "trip_id": trip_id,
@@ -175,7 +197,7 @@ async fn form_submit(trip_id: &str, item_title: &str, amount: f32, total: bool,
         "amount": amount,
         "total": total,
         "paid": paid,
-        "payers": payers,
+        "payers": payers_sorted,
         "time": DateTime::now()
     };
     let result = records.insert_one(
@@ -223,7 +245,7 @@ async fn get_records(trip_id: &str) -> String {
             "payers":    record.get("payers").unwrap(),
         }).to_string());
     }
-    println!(" => Retreived records: {:?}", records.join(","));
+    // println!(" => Retreived records: {:?}", records.join(","));
     format!(
         "{{\"result\": \"success\", \"records\": [{}]}}",
         records.join(",")
@@ -298,9 +320,9 @@ async fn get_payments(trip_id: &str) -> String {
         }
     }
 
-    let tmp = spent.clone();
-    for i in tmp.keys() {
-        for j in tmp.keys() {
+    let tmp = spent.clone().to_owned();
+    for (i, _) in tmp.iter().sorted_by_key(|x| x.0) {
+        for (j, _) in tmp.iter().sorted_by_key(|x| x.0) {
             let from_spent = spent.get(i).unwrap().to_owned();
             let to_spent   = spent.get(j).unwrap().to_owned();
             if from_spent <= 0.0 {
