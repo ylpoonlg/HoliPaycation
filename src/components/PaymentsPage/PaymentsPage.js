@@ -70,17 +70,15 @@ function PaymentsPage() {
 
     <div className='mt-8 px-6'>{
       payments.length > 0 ? payments.map((val, i) => {
-        let nameStyle = 'mx-4 font-semibold text-2xl text-gray-800';
+        let nameStyle = 'mx-4 font-semibold text-xl md:text-2xl text-gray-800';
         return (
-          <div key={'payment-item-'+i.toString()} style={{ minWidth: 'fit-content' }}
-            className='my-4 px-4 py-4 shadow shadow-gray-500 rounded-lg' style={{ minWidth: 'fit-content' }}>
-            <div className='flex justify-center items-center'>
-              <span className={nameStyle}>{val.from}</span>
-              <span className='text-lg text-gray-500'><FaArrowRight /></span>
-              <span className={nameStyle}>{val.to}</span>
-              <span className='mx-6 font-bold text-3xl text-blue-600'>
-                {tripDetails.currency} {val.amount.toFixed(2)}
-              </span>
+          <div key={'payment-item-'+i.toString()}
+            className='my-4 px-4 py-4 shadow shadow-gray-500 rounded-lg flex justify-center items-center flex-wrap overflow-x-auto'>
+            <div className={nameStyle}>{val.from}</div>
+            <div className='text-lg text-gray-500'><FaArrowRight /></div>
+            <div className={nameStyle}>{val.to}</div>
+            <div className='mx-auto md:mx-6 font-bold text-2xl md:text-3xl text-blue-600'>
+              {tripDetails.currency} {val.amount.toFixed(2)}
             </div>
           </div>
         );
